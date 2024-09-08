@@ -38,7 +38,7 @@ export default function DishSelection({navigation, route}: DishSelectionType):Re
     }
 
     // Add order to AyncDataStorage )
-    // Todo: Change it to send order to server and update
+    // Change it to send order to server and update
     const addOrder = async () => {
         const dataStoreInstance = dataStore.getInstance()
         const newOrder = JSON.parse(JSON.stringify(context.selectedItems)) //create a new order with new space, deep copy
