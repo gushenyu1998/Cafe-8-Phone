@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import {DishType, MenuType, FullOrderType, OneOrderType} from "../Config/OrderType";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import AppContext from "../Utils/AppContext";
+import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import {RouteProp} from "@react-navigation/native";
@@ -37,8 +37,6 @@ type MenuInputType = {
 
 
 const Dish = (item: DishInputType): React.JSX.Element => {
-    // console.log(item.data.name + ": " + item.quantity)
-    const [quantity, setQuantity] = useState(item.quantity)
     return (
         <TouchableOpacity style={{...styles.DishContainer, borderWidth: item.opened ? 1 : 0, padding: item.opened ? 5 : 0}}
                           key={item.index}
@@ -48,32 +46,6 @@ const Dish = (item: DishInputType): React.JSX.Element => {
                 <Text style={styles.DishTitle}>#{item.data.id} {item.data.name}</Text>
                 <Text style={{...styles.DishTitle, textAlign:'right'}}>$ {item.data.price}</Text>
             </View>
-            {/*This part of code is for set the quantity of the Item Directly  looks like - [number] + */}
-            {/*<View style={styles.DishButtonContainer}>*/}
-            {/*    <TouchableOpacity style={styles.AdjustButton}*/}
-            {/*                      onPress={() => {*/}
-            {/*                          if (quantity > 0) {*/}
-            {/*                              item.decrease(item.data, item.index)*/}
-            {/*                              setQuantity((prevState) => {*/}
-            {/*                                  return prevState - 1*/}
-            {/*                              })*/}
-            {/*                          }*/}
-            {/*                      }}>*/}
-            {/*        <Icon name={"remove"} size={30}/>*/}
-            {/*    </TouchableOpacity>*/}
-            {/*    <View style={{...styles.NumberContainer, borderWidth: item.opened ? 1 : 0}}>*/}
-            {/*        <Text style={{fontSize: 20}}>{quantity}</Text>*/}
-            {/*    </View>*/}
-            {/*    <TouchableOpacity style={styles.AdjustButton}*/}
-            {/*                      onPress={() => {*/}
-            {/*                          item.increase(item.data, item.index)*/}
-            {/*                          setQuantity((prevState) => {*/}
-            {/*                              return prevState + 1*/}
-            {/*                          })*/}
-            {/*                      }}>*/}
-            {/*        <Icon name={"add"} size={30}/>*/}
-            {/*    </TouchableOpacity>*/}
-            {/*</View>*/}
         </TouchableOpacity>
     )
 }
@@ -116,7 +88,7 @@ export default function DishList({menuData, navigation, route}: MenuInputType): 
     // function or adding the dish to order
     const addDish = (item: DishType, key: number) => {
         const dishName = item.name
-        const defaultTags: string[] = menuData.defaultTags
+        const defaultTags: [string, number][] = menuData.defaultTags
         setCurrentOrder((prevState: FullOrderType) => {
             const toAdd = prevState.orders.findIndex((order) => {
                 return order.order_name == item.name

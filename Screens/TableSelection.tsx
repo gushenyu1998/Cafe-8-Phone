@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Alert} from "react-native";
 import {Picker} from '@react-native-picker/picker';
-import AppContext from "../Utils/AppContext";
+import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import {FullOrderType} from "../Config/OrderType";

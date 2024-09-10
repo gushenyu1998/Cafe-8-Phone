@@ -11,7 +11,18 @@ type AppContextType = {
 type AppContextProviderProps = {
     children: ReactNode;
 }
-export const AppContext = createContext<AppContextType[]>([]);
+export const AppContext = createContext<AppContextType>({
+    selectedItems:{
+        order_id: 0,
+        table: "0",
+        price:0,
+        orders:[]
+    },
+    clearSelectedItems: () => {},
+    updateSelectedItems: () => {},
+});
+
+// Create Sockect Context Here
 export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}) => {
     const [selectedItems, setSelectedItems] = useState<FullOrderType>({
         order_id: 0,
@@ -34,5 +45,3 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
         </AppContext.Provider>
     );
 };
-
-export default AppContext;

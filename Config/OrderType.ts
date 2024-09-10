@@ -9,7 +9,7 @@ export interface OneOrderType {
     dish_id: number,
     order_name: string, // need plus one Dish ID here
     note: string,
-    tags: string[]
+    tags: [string, number][]
     quantity: number,
     price: number
 }
@@ -26,7 +26,7 @@ export interface DishType {
 export interface MenuType {
     "sectionName": string,
     "tagSection": string[],
-    "defaultTags": string[],
+    "defaultTags": [string, number][],
     "defaultMaterial": {
         [key: string]: number
     },

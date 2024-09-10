@@ -33,14 +33,16 @@ export default function ({
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <View style={{width: 300}}>
-                        <Text style={styles.checklistTitle}>Table: {modalData.table} | Price: ${modalData.price}</Text>
+                        <Text style={styles.checklistTitle}>Table: {modalData.table} | Price: ${modalData.price.toFixed(2)}</Text>
                         {
                             modalData.orders.map((item, index) => {
+                                const tags =  item.tags.map(tuple=>tuple[0])
+
                                 return (
                                     <View key={"Checklist" + index} style={styles.orderContainer}>
                                         <View style={styles.oneOrderContainer}>
-                                            <Text style={styles.oneOrderTitle}>#{item.dish_id} {item.order_name}</Text>
-                                            <Text style={styles.oneOrderContent}>{item.tags.toString()}</Text>
+                                            <Text style={styles.oneOrderTitle}>#{item.dish_id} {item.order_name} ${item.price.toFixed(2)}</Text>
+                                            <Text style={styles.oneOrderContent}>{tags.toString()}</Text>
                                         </View>
                                         <Pressable onPress={() => {
                                             deleteOrder(item)

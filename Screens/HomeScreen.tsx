@@ -13,7 +13,8 @@ import {RouteProp} from "@react-navigation/native";
 
 //import Navigation Type
 import {RootStackParamList} from "../App";
-import {FetchAPI, FetchMenu} from "../Utils/APIFetching";
+import {FetchAPI} from "../Utils/APIFetching";
+import ConnectionStatus from "../Components/ConnectionStatus";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
@@ -24,7 +25,8 @@ interface HomeScreenProps {
 }
 
 interface HomeScreenState {
-    data: FullOrderType[]
+    data: FullOrderType[],
+    success: boolean
 }
 
 class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
@@ -33,7 +35,8 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
     constructor(props: HomeScreenProps) {
         super(props);
         this.state = {
-            data: []
+            data: [],
+            success: false
         }
     }
 
@@ -71,12 +74,13 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
     render() {
         const {data} = this.state
         const {navigation} = this.props;
-        console.log(FetchAPI("/getMenu"))
+        // console.log(FetchAPI("/getMenu"))
         return (
             <SafeAreaView style={stylesheet.container}>
                 {/*<FlatList data={data} renderItem={({item}) => {*/}
                 {/*    return <OrderCard item={item}/>*/}
                 {/*}}/>*/}
+                <ConnectionStatus success={this.state.success}/>
                 <SwipeListView
                     data={this.state.data}
                     renderItem={({item}) => (
@@ -104,8 +108,9 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
                     keyExtractor={(item, index) => item.order_id.toString() + index.toString()}
                 />
                 <AddButton onPress={() => {
-                    FetchAPI('/getMenu')
-                    // navigation.navigate('TableSelection')
+                    // FetchAPI('/getMenu')
+                    navigation.navigate('TableSelection')
+                    // this.setState({success: !this.state.success});
                 }}/>
             </SafeAreaView>
         )

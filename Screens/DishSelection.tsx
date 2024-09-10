@@ -9,7 +9,7 @@ import {
     ScrollView,
     Alert, FlatList,
 } from "react-native";
-import AppContext from "../Utils/AppContext";
+import {AppContext} from "../Utils/AppContext";
 import DishList from "../Components/DishList";
 import {FullOrderType, MenuType, OneOrderType} from "../Config/OrderType";
 import ConfirmAndCancelButton from "../Components/Buttons/ConfirmAndCancelButton";
@@ -37,7 +37,7 @@ export default function DishSelection({navigation, route}: DishSelectionType):Re
         setModalVisible(false)
     }
 
-    // Add order to AyncDataStorage )
+    // Add order to AyncDataStorage
     // Change it to send order to server and update
     const addOrder = async () => {
         const dataStoreInstance = dataStore.getInstance()
@@ -54,7 +54,7 @@ export default function DishSelection({navigation, route}: DishSelectionType):Re
     }
 
     return (
-        <SafeAreaView style={{height: "100%", paddingTop: 40}}>
+        <SafeAreaView style={{height: "100%"}}>
             <OrderCheckModal
                 data={context.selectedItems}
                 closeModal={closeModal}

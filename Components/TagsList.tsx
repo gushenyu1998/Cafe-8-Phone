@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Alert} from "react-native";
-import AppContext from "../Utils/AppContext";
+import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import {FullOrderType, OneOrderType} from "../Config/OrderType";
@@ -10,26 +10,26 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 type TagListInput = {
     sectionName: string,
-    data: string[],
-    selectedTags: string[],
-    deleteTag: (tag: string) => void,
-    addTag: (tag: string) => void,
+    data: [string, number][],
+    selectedTags: [string, number][],
+    deleteTag: (tag: [string, number]) => void,
+    addTag: (tag: [string, number]) => void,
 }
 
 type TagInput = {
-    name: string,
-    selectedTag: string[],
-    deleteTag: (tag: string) => void,
-    addTag: (tag: string) => void,
+    tag: [string, number],
+    selectedTag: [string, number][],
+    deleteTag: (tag: [string, number]) => void,
+    addTag: (tag: [string, number]) => void,
 }
 
-function Tag({name, selectedTag, deleteTag, addTag}: TagInput): React.JSX.Element {
+function Tag({tag, selectedTag, deleteTag, addTag}: TagInput): React.JSX.Element {
     const [opened, setOpened] = useState(false)
     useEffect(() => {
-        const temp = selectedTag.includes(name)
+        const temp = selectedTag.some(tuple => tuple[0] == tag[0] && tuple[1] == tag[1])
         if (temp) {
             setOpened(true)
-        }else {
+        } else {
             setOpened(false)
         }
     }, [selectedTag]);
@@ -37,13 +37,13 @@ function Tag({name, selectedTag, deleteTag, addTag}: TagInput): React.JSX.Elemen
         <TouchableOpacity
             style={{
                 ...styles.tags,
-                backgroundColor: opened ? "#7c7c7c" : tagsPalette[determineColor(name, 5) % tagsPalette.length]
+                backgroundColor: opened ? "#7c7c7c" : tagsPalette[determineColor(tag[0], 5) % tagsPalette.length]
             }}
             onPress={() => {
                 if (opened) {
-                    deleteTag(name)
+                    deleteTag(tag)
                 } else {
-                    addTag(name)
+                    addTag(tag)
                 }
             }}
         >
@@ -51,7 +51,7 @@ function Tag({name, selectedTag, deleteTag, addTag}: TagInput): React.JSX.Elemen
                 fontSize: 17,
                 textTransform: "capitalize",
                 fontWeight: "bold"
-            }}>{name}{opened ? <Icon name={'close'} size={15}/> : ''}</Text>
+            }}>{tag[0]}{opened ? <Icon name={'close'} size={15}/> : ''}</Text>
         </TouchableOpacity>
     )
 }
@@ -72,10 +72,9 @@ export default function TagsList({
             <View style={styles.tagContainer}>
                 {
                     data.map((value, index) => {
-
                         return (
                             <Tag key={"Tag" + index}
-                                 name={value}
+                                 tag={value}
                                  selectedTag={selectedTags}
                                  deleteTag={deleteTag}
                                  addTag={addTag}/>

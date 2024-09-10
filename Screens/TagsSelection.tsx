@@ -8,7 +8,7 @@ import {
     ScrollView,
     TextInput, FlatList
 } from "react-native";
-import AppContext from "../Utils/AppContext";
+import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import {RouteProp} from "@react-navigation/native";
@@ -28,8 +28,8 @@ interface TagsSelectionProps {
 }
 
 type TagsDemoType = {
-    tags: string[],
-    delete_tag: (tag: string) => void
+    tags: [string, number][],
+    delete_tag: (tag: [string, number]) => void
     submit_note: (text: string) => void
 }
 const TagsDemoAndNote: React.FC<TagsDemoType> = ({tags, delete_tag, submit_note}) => {
@@ -47,12 +47,12 @@ const TagsDemoAndNote: React.FC<TagsDemoType> = ({tags, delete_tag, submit_note}
                         key={index}
                         style={{
                             ...styles.tag,
-                            backgroundColor: tagsPalette[determineColor(tag, 5) % tagsPalette.length]
+                            backgroundColor: tagsPalette[determineColor(tag[0], 5) % tagsPalette.length]
                         }}
                         onPress={() => delete_tag(tag)}
                     >
                         <Text style={styles.tagText}>
-                            {tag}
+                            {tag[0]}
                             <Icon name={'close'}/>
                         </Text>
                     </TouchableOpacity>
@@ -73,7 +73,8 @@ export default function TagsSelectScreen(item: TagsSelectionProps): React.JSX.El
     const orderDataSection = item.route.params.section
     const defaultTags = item.route.params.data.tags
     const context = useContext(AppContext)
-    const [selectedTags, setSelectedTags] = useState<string[]>([])
+    const [selectedTags, setSelectedTags] = useState<[string, number][]>([])
+    const [price, setPrice] = useState<number>(item.route.params.data.price)
     const [note, setNote] = useState('');
 
     //Deep Copy the Default Tags to the selected Tags (buffer)
@@ -81,15 +82,23 @@ export default function TagsSelectScreen(item: TagsSelectionProps): React.JSX.El
         setSelectedTags(JSON.parse(JSON.stringify(defaultTags)))
     }, []);
 
+    useEffect(() => {
+        console.log(selectedTags)
+        console.log(price)
+    }, [selectedTags]);
     //add Tags to Buffer
-    const addTag = (tag: string) => {
+    const addTag = (tag: [string, number]) => {
         const temp = [...selectedTags, tag]
+        const addPrice = tag[1]
+        setPrice(price + addPrice)
         setSelectedTags(temp)
     }
 
     //delete Tag from buffer
-    const deleteTag = (tag: string) => {
-        const temp = selectedTags.filter(item => item != tag)
+    const deleteTag = (tag: [string, number]) => {
+        const temp = selectedTags.filter(tuple => !(tuple[0] == tag[0]))
+        const minusPrise = tag[1]
+        setPrice(price - minusPrise)
         setSelectedTags(temp)
     }
 
@@ -127,9 +136,9 @@ export default function TagsSelectScreen(item: TagsSelectionProps): React.JSX.El
                     quantity: 1,
                     tags: selectedTags,
                     note: note,
-                    price: item.route.params.data.price
+                    price: price
                 }
-                context.selectedItems.price += item.route.params.price
+                context.selectedItems.price += price
                 context.selectedItems.orders.push(newOneOrder)
                 context.updateSelectedItems(context.selectedItems)
                 item.navigation.navigate("DishSelection")
@@ -143,7 +152,6 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         padding: 10,
-        paddingTop: 40,
     },
     demoContainer: {
         padding: 16

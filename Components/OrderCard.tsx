@@ -34,12 +34,16 @@ export function OrderCard({item}: OrderCardType) {
                                       ...styles.orderContainer,
                                       backgroundColor: orderPalette[index % orderPalette.length]
                                   }}>
-                                <Text style={styles.orderStyle}>#{order.dish_id} {order.order_name} {order.quantity > 1? "* "+order.quantity.toString(): ''}</Text>
+                                <View style={styles.titleContainer}>
+                                    <Text style={styles.orderStyle}>#{order.dish_id} {order.order_name}</Text>
+                                    <View></View>
+                                    <Text style={styles.orderStyle}>${order.price}</Text>
+                                </View>
                                 <View style={styles.tagsContainer}>
                                     {
                                         //map to each tag in the order
                                         order.tags.map((tag, key) => {
-                                            return TagItem(tag, key)
+                                            return TagItem(tag[0], key)
                                         })
                                     }
                                 </View>
@@ -68,6 +72,10 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "gray",
         borderRadius: 10,
+    },
+    titleContainer:{
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
     tableStyle: {
         fontFamily: "monospace",
