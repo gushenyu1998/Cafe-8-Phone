@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Modal, View, Text, TouchableWithoutFeedback, StyleSheet, Pressable,} from "react-native";
-import {FullOrderType, OneOrderType} from "../Config/OrderType";
+import {FullOrderType, OneOrderType} from "../Config/TypeConfig";
 import ConfirmAndCancelButton from "./Buttons/ConfirmAndCancelButton";
 import Icon from "react-native-vector-icons/MaterialIcons";
 

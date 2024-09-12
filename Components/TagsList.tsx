@@ -3,7 +3,7 @@ import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Alert} from "rea
 import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
-import {FullOrderType, OneOrderType} from "../Config/OrderType";
+import {FullOrderType, OneOrderType} from "../Config/TypeConfig";
 import {RouteProp} from "@react-navigation/native";
 import {determineColor, tagsPalette} from "../Config/Palette";
 import Icon from "react-native-vector-icons/MaterialIcons";

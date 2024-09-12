@@ -1,6 +1,6 @@
 import React from "react";
 import {View, Text, Platform, StyleSheet, Image} from "react-native";
-import {FullOrderType} from "../Config/OrderType";
+import {FullOrderType} from "../Config/TypeConfig";
 import {orderPalette, tagsPalette, determineColor} from "../Config/Palette";
 
 type OrderCardType = {
@@ -37,7 +37,7 @@ export function OrderCard({item}: OrderCardType) {
                                 <View style={styles.titleContainer}>
                                     <Text style={styles.orderStyle}>#{order.dish_id} {order.order_name}</Text>
                                     <View></View>
-                                    <Text style={styles.orderStyle}>${order.price}</Text>
+                                    <Text style={styles.orderStyle}>${order.price.toFixed(2)}</Text>
                                 </View>
                                 <View style={styles.tagsContainer}>
                                     {
@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
     orderStyle: {
         fontSize: 20,
         fontFamily: "sans-serif",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        maxWidth: 280
     },
     orderContainer: {
         padding: 10,

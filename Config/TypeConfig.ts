@@ -32,3 +32,10 @@ export interface MenuType {
     },
     "dishes": DishType[]
 }
+
+export interface TagsType {
+    [key: string]: [string, number][]
+}
+
+
+//TableType: string[]

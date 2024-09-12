@@ -4,7 +4,7 @@ import {AppContextProvider} from "./Utils/AppContext";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import DishSelection from "./Screens/DishSelection";
 import TableSelection from "./Screens/TableSelection";
-import {OneOrderType} from "./Config/OrderType";
+import {OneOrderType} from "./Config/TypeConfig";
 import TagsSelectScreen from "./Screens/TagsSelection";
 import {useEffect} from "react";
 import {FetchAPI} from "./Utils/APIFetching";

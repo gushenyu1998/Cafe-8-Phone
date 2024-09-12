@@ -1,25 +1,18 @@
 import React, {useContext, useEffect, useState} from "react";
-import {
-    Animated,
-    SafeAreaView,
-    Text,
-    TouchableWithoutFeedback,
-    View,
-    StyleSheet,
-    ScrollView,
-    Alert, FlatList,
-} from "react-native";
+import {Alert, FlatList, SafeAreaView, View,} from "react-native";
 import {AppContext} from "../Utils/AppContext";
 import DishList from "../Components/DishList";
-import {FullOrderType, MenuType, OneOrderType} from "../Config/OrderType";
+import {MenuType, OneOrderType} from "../Config/TypeConfig";
 import ConfirmAndCancelButton from "../Components/Buttons/ConfirmAndCancelButton";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import {RouteProp} from "@react-navigation/native";
 import OrderCheckModal from "../Components/OrderCheckModal";
 import dataStore from "../Utils/DataStore";
+import ConnectionStatus from "../Components/ConnectionStatus";
+import DataStore from "../Utils/DataStore";
 
-const menuData: MenuType[] = require('../Config/Menu.json')
+
 type DishSelectionNavigationProp = NativeStackNavigationProp<RootStackParamList, 'DishSelection'>;
 type DishSelectionRouteProp = RouteProp<RootStackParamList, 'DishSelection'>;
 
@@ -29,32 +22,37 @@ type DishSelectionType = {
 }
 
 
-export default function DishSelection({navigation, route}: DishSelectionType):React.JSX.Element {
+export default function DishSelection({navigation, route}: DishSelectionType): React.JSX.Element {
     const context = useContext(AppContext)
     const [modalVisible, setModalVisible] = useState(false);
+    const [menuData, setMenuData] = useState<MenuType[]>([]);
+    const dataStore = DataStore.getInstance()
+
+    useEffect(() => {
+        dataStore.getMenu().then(menu => setMenuData(menu));
+    }, []);
 
     const closeModal = () => {
         setModalVisible(false)
     }
 
-    // Add order to AyncDataStorage
+    // Add order to Aync DataStorage
     // Change it to send order to server and update
     const addOrder = async () => {
-        const dataStoreInstance = dataStore.getInstance()
         const newOrder = JSON.parse(JSON.stringify(context.selectedItems)) //create a new order with new space, deep copy
-        await dataStoreInstance.addItem(newOrder)
+        return context.addOrder(newOrder)
     };
 
     // Delete one order in the Context
     const deleteOrder = (item: OneOrderType) => {
         context.selectedItems.price -= item.price
-        const newOrders = context.selectedItems.orders.filter((order: OneOrderType) => order != item)
-        context.selectedItems.orders = newOrders
+        context.selectedItems.orders = context.selectedItems.orders.filter((order: OneOrderType) => order != item)
         context.updateSelectedItems(context.selectedItems)
     }
 
     return (
         <SafeAreaView style={{height: "100%"}}>
+            <ConnectionStatus success={context.isConnect}/>
             <OrderCheckModal
                 data={context.selectedItems}
                 closeModal={closeModal}
@@ -64,7 +62,7 @@ export default function DishSelection({navigation, route}: DishSelectionType):Re
                     if (context.selectedItems.orders.length == 0) {
                         Alert.alert("Please make any order")
                     } else {
-                        addOrder().then(r => navigation.navigate("Home"))
+                        addOrder().then(_ => navigation.navigate("Home"))
                     }
                 }}
             />
@@ -84,7 +82,14 @@ export default function DishSelection({navigation, route}: DishSelectionType):Re
                     contentCancel="Clean Order"
                     contentConfirm="Check Menu"
                     onConfirm={() => {
-                        setModalVisible(true)
+                        if (context.isConnect) {
+                            setModalVisible(true)
+                        } else {
+                            Alert.alert(
+                                "Error: App is not connect to the server\n",
+                                "Please wait until connected or contact developer"
+                            )
+                        }
                     }}
                     onCancel={() => {
                         context.selectedItems.price = 0

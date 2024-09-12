@@ -15,8 +15,9 @@ import {RouteProp} from "@react-navigation/native";
 import TagsList from "../Components/TagsList";
 import {determineColor, tagsPalette} from "../Config/Palette";
 import SubmitButton from "../Components/Buttons/SubmitButton";
-import {OneOrderType} from "../Config/OrderType";
+import {OneOrderType, TagsType} from "../Config/TypeConfig";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import DataStore from "../Utils/DataStore";
 
 const tagList = require('../Config/Tags.json')
 type TagsSelectionNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TagsSelection'>;
@@ -73,19 +74,18 @@ export default function TagsSelectScreen(item: TagsSelectionProps): React.JSX.El
     const orderDataSection = item.route.params.section
     const defaultTags = item.route.params.data.tags
     const context = useContext(AppContext)
+    const dataStore = DataStore.getInstance()
     const [selectedTags, setSelectedTags] = useState<[string, number][]>([])
     const [price, setPrice] = useState<number>(item.route.params.data.price)
     const [note, setNote] = useState('');
+    const [tagList, setTagList] = useState<TagsType>({})
 
-    //Deep Copy the Default Tags to the selected Tags (buffer)
     useEffect(() => {
+        //Deep Copy the Default Tags to the selected Tags (buffer)
         setSelectedTags(JSON.parse(JSON.stringify(defaultTags)))
+        dataStore.getTags().then(tagList => setTagList(tagList))
     }, []);
 
-    useEffect(() => {
-        console.log(selectedTags)
-        console.log(price)
-    }, [selectedTags]);
     //add Tags to Buffer
     const addTag = (tag: [string, number]) => {
         const temp = [...selectedTags, tag]

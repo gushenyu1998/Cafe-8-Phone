@@ -7,7 +7,7 @@ import {
     StyleSheet,
     TouchableOpacity,
 } from "react-native";
-import {DishType, MenuType, FullOrderType, OneOrderType} from "../Config/OrderType";
+import {DishType, MenuType, FullOrderType, OneOrderType} from "../Config/TypeConfig";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";

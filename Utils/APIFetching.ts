@@ -23,7 +23,6 @@ const api = axios.create({
 export const FetchAPI = async (endpoint: string, config?: AxiosRequestConfig) => {
     try {
         const response = await api.get(endpoint, config);
-        console.log(response.data)
         return response.data;
     } catch (error) {
         // Handle errors (log, rethrow, etc.)

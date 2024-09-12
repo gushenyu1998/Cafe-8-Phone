@@ -1,11 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {FullOrderType} from "../Config/OrderType";
+import {MenuType, TagsType} from "../Config/TypeConfig";
+import {Alert} from "react-native";
+import {FetchAPI} from "./APIFetching";
 
 class DataStore {
     private static instance: DataStore
-    private dataKey = "data_list"
+    private menuKey = "menu_key"
+    private tableKey = "table_key"
+    private tagsKey = "tags_key"
 
-    private constructor() {}
+    private constructor() {
+    }
 
     public static getInstance(): DataStore {
         if (!DataStore.instance) {
@@ -14,32 +19,70 @@ class DataStore {
         return DataStore.instance
     }
 
-    async getData(): Promise<FullOrderType[]> {
+
+    async getMenu(): Promise<MenuType[]> {
         try {
-            const data = await AsyncStorage.getItem(this.dataKey)
+            const data = await AsyncStorage.getItem(this.menuKey)
             return data ? JSON.parse(data) : []
         } catch (error) {
-            console.log("Fail in get data")
+            console.log("Fail in get menu")
             return []
         }
     }
 
-    async addItem(item: FullOrderType): Promise<void> {
-        const data = await this.getData();
-        data.push(item);
-        await AsyncStorage.setItem(this.dataKey, JSON.stringify(data));
+    async getTags(): Promise<TagsType> {
+        try {
+            const data = await AsyncStorage.getItem(this.tagsKey)
+            return data ? JSON.parse(data) : {}
+        } catch (error) {
+            console.log("Fail in get tags")
+            return {}
+        }
     }
 
-    async deleteItem(order_id: number): Promise<void> {
-        const data = await this.getData()
-        const removeIndex = data.findIndex(item => item.order_id === order_id)
-        data.splice(removeIndex, 1);
-        await AsyncStorage.setItem(this.dataKey, JSON.stringify(data));
+    async getTables(): Promise<string[]> {
+        try {
+            const data = await AsyncStorage.getItem(this.menuKey)
+            return data ? JSON.parse(data) : []
+        } catch (error) {
+            console.log("Fail in get menu")
+            return []
+        }
     }
 
-    async cleanCache():Promise<void> {
-        await AsyncStorage.removeItem(this.dataKey)
+    async fetchMemu(): Promise<boolean> {
+        try {
+            const menu = await FetchAPI("http://10.0.2.2:5000/getMenu")
+            await AsyncStorage.setItem(this.menuKey, JSON.stringify(menu))
+            return true
+        } catch (error) {
+            Alert.alert("Error", "Fail to fetch menu from server")
+            return false
+        }
     }
+
+    async fetchTable(): Promise<boolean> {
+        try {
+            const table = await FetchAPI("http://10.0.2.2:5000/getTables")
+            await AsyncStorage.setItem(this.tableKey, JSON.stringify(table))
+            return true
+        } catch (error) {
+            Alert.alert("Error", "Fail to fetch table list from server")
+            return false
+        }
+    }
+
+    async fetchTags(): Promise<boolean> {
+        try {
+            const tags = await FetchAPI("http://10.0.2.2:5000/getTags")
+            await AsyncStorage.setItem(this.tableKey, JSON.stringify(tags))
+            return true
+        } catch (error) {
+            Alert.alert("Error", "Fail to fetch table list from server")
+            return false
+        }
+    }
+
 }
 
 export default DataStore
