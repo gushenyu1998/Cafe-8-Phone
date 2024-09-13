@@ -5,6 +5,8 @@ import DataStore from "./DataStore";
 import {Alert} from "react-native";
 import {FetchAPI} from "./APIFetching";
 
+const networkConfig = require('../Config/Network.json')
+
 export interface AppContextType {
     selectedItems: FullOrderType;
     clearSelectedItems: () => void;
@@ -47,10 +49,10 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const [isConnect, setIsConnect] = useState<boolean>(false)
     const [order, setOrder] = useState<FullOrderType[]>([])
     const dataStore = DataStore.getInstance()
+    const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
     useEffect(() => {
         const connectSocket = () => {
-            const newSocket = io('http://10.0.2.2:5000/cafe-8-backend'); // Replace with your API endpoint
-
+            const newSocket = io(hostAddress + '/cafe-8-backend'); // Replace with your API endpoint
             newSocket.on('connect', () => {
                 // console.log('Connected to Socket.IO server');
                 setIsConnect(true);
@@ -63,14 +65,14 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
 
             newSocket.on('message', (message: string) => {
                 if (message.includes('Success: Update the Order')) {
-                    FetchAPI("http://10.0.2.2:5000/getOrder").then(
+                    FetchAPI(hostAddress + "/getOrder").then(
                         order => setOrder(order)
                     )
                 }
             });
 
             setSocket(newSocket);
-            FetchAPI("http://10.0.2.2:5000/getOrder").then(
+            FetchAPI(hostAddress + "/getOrder").then(
                 order => setOrder(order)
             )
         };
@@ -85,8 +87,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             dataStore.fetchMemu().then()
             dataStore.fetchTable().then()
             dataStore.fetchTags().then()
-        }catch (e) {
-           Alert.alert("Error fetching data from server","The menu may not be latest");
+        } catch (e) {
+            Alert.alert("Error fetching data from server", "The menu may not be latest");
         }
     }, []);
 

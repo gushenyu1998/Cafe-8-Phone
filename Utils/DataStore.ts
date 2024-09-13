@@ -3,11 +3,14 @@ import {MenuType, TagsType} from "../Config/TypeConfig";
 import {Alert} from "react-native";
 import {FetchAPI} from "./APIFetching";
 
+const networkConfig = require('../Config/Network.json')
+
 class DataStore {
     private static instance: DataStore
     private menuKey = "menu_key"
     private tableKey = "table_key"
     private tagsKey = "tags_key"
+    private hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
 
     private constructor() {
     }
@@ -42,7 +45,7 @@ class DataStore {
 
     async getTables(): Promise<string[]> {
         try {
-            const data = await AsyncStorage.getItem(this.menuKey)
+            const data = await AsyncStorage.getItem(this.tableKey)
             return data ? JSON.parse(data) : []
         } catch (error) {
             console.log("Fail in get menu")
@@ -52,7 +55,7 @@ class DataStore {
 
     async fetchMemu(): Promise<boolean> {
         try {
-            const menu = await FetchAPI("http://10.0.2.2:5000/getMenu")
+            const menu = await FetchAPI(this.hostAddress + "/getMenu")
             await AsyncStorage.setItem(this.menuKey, JSON.stringify(menu))
             return true
         } catch (error) {
@@ -63,7 +66,7 @@ class DataStore {
 
     async fetchTable(): Promise<boolean> {
         try {
-            const table = await FetchAPI("http://10.0.2.2:5000/getTables")
+            const table = await FetchAPI(this.hostAddress + "/getTables")
             await AsyncStorage.setItem(this.tableKey, JSON.stringify(table))
             return true
         } catch (error) {
@@ -74,8 +77,8 @@ class DataStore {
 
     async fetchTags(): Promise<boolean> {
         try {
-            const tags = await FetchAPI("http://10.0.2.2:5000/getTags")
-            await AsyncStorage.setItem(this.tableKey, JSON.stringify(tags))
+            const tags = await FetchAPI(this.hostAddress + "/getTags")
+            await AsyncStorage.setItem(this.tagsKey, JSON.stringify(tags))
             return true
         } catch (error) {
             Alert.alert("Error", "Fail to fetch table list from server")

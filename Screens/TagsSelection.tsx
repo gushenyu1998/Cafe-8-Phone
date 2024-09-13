@@ -6,7 +6,7 @@ import {
     View,
     StyleSheet,
     ScrollView,
-    TextInput, FlatList
+    TextInput, FlatList, ActivityIndicator
 } from "react-native";
 import {AppContext} from "../Utils/AppContext";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
@@ -19,7 +19,6 @@ import {OneOrderType, TagsType} from "../Config/TypeConfig";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DataStore from "../Utils/DataStore";
 
-const tagList = require('../Config/Tags.json')
 type TagsSelectionNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TagsSelection'>;
 type TagsSelectionRouteProp = RouteProp<RootStackParamList, 'TagsSelection'>;
 
@@ -115,14 +114,16 @@ export default function TagsSelectScreen(item: TagsSelectionProps): React.JSX.El
                     {
                         orderDataSection.map((value, index) => {
                             return (
-                                <TagsList
-                                    key={"Section" + index}
-                                    sectionName={value}
-                                    data={tagList[value]}
-                                    selectedTags={selectedTags}
-                                    deleteTag={deleteTag}
-                                    addTag={addTag}
-                                />
+                                Object.keys(tagList).length ?
+                                    <TagsList
+                                        key={"Section" + index}
+                                        sectionName={value}
+                                        data={tagList[value]}
+                                        selectedTags={selectedTags}
+                                        deleteTag={deleteTag}
+                                        addTag={addTag}
+                                    /> :
+                                    <ActivityIndicator size="large" color="#a0c4ff" style={{margin: 50}} key={"Section" + index}/>
                             )
                         })
                     }
