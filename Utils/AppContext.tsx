@@ -4,6 +4,7 @@ import io, {Socket} from "socket.io-client";
 import DataStore from "./DataStore";
 import {Alert} from "react-native";
 import {FetchAPI} from "./APIFetching";
+import {Audio} from "expo-av";
 
 const networkConfig = require('../Config/Network.json')
 
@@ -48,6 +49,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const [socket, setSocket] = useState<Socket | null>(null)
     const [isConnect, setIsConnect] = useState<boolean>(false)
     const [order, setOrder] = useState<FullOrderType[]>([])
+    const [sound, setSound] = useState<Audio.Sound>(require("../assets/notification.mp3"))
     const dataStore = DataStore.getInstance()
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
     useEffect(() => {
@@ -66,7 +68,12 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             newSocket.on('message', (message: string) => {
                 if (message.includes('Success: Update the Order')) {
                     FetchAPI(hostAddress + "/getOrder").then(
-                        order => setOrder(order)
+                        async order => {
+                            const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
+                            setSound(sound);
+                            await sound.playAsync();
+                            setOrder(order)
+                        }
                     )
                 }
             });
@@ -79,6 +86,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
         connectSocket();
         return () => {
             socket?.disconnect();
+            sound ? sound.unloadAsync() : undefined
         };
     }, []);
 

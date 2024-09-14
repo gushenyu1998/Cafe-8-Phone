@@ -1,25 +1,25 @@
 import React, {Component} from "react";
-import {FullOrderType} from "../Config/TypeConfig";
 import {SafeAreaView, View, StyleSheet, TouchableOpacity, Text, Alert} from "react-native";
 import {OrderCard} from "../Components/OrderCard";
 import DataStore from "../Utils/DataStore";
 import AddButton from "../Components/Buttons/AddButton";
 import {SwipeListView} from 'react-native-swipe-list-view';
 
-
 //React Navigation
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RouteProp} from "@react-navigation/native";
+import {Audio} from "expo-av";
 
 //import Navigation Type
 import {RootStackParamList} from "../App";
-import {FetchAPI} from "../Utils/APIFetching";
 import ConnectionStatus from "../Components/ConnectionStatus";
 import {AppContext, AppContextType} from "../Utils/AppContext";
-import dataStore from "../Utils/DataStore";
+
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+
+const audio = require("../assets/notification.mp3")
 
 interface HomeScreenProps {
     navigation: HomeScreenNavigationProp;
@@ -31,6 +31,7 @@ interface HomeScreenState {}
 class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
     private dataStore = DataStore.getInstance()
     static contextType = AppContext
+
     // @ts-ignore
     context!: AppContextType
 
