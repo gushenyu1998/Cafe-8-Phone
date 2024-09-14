@@ -8,7 +8,7 @@ type ConnectionStatus = {
 export default function ConnectionStatus({success}: ConnectionStatus) {
     return (
         <View style={{...styles.container, backgroundColor:success?"green":"#d8c36b"}}>
-            <Text style={{fontSize: 12.5, fontWeight: 'bold', textAlign:'center', color:"white"}}>{success ? "Connected" : "Connecting"}</Text>
+            <Text style={{fontSize: 15, fontWeight: 'bold', textAlign:'center', color:"white"}}>{success ? "Connected" : "Connecting"}</Text>
         </View>
     )
 }
@@ -16,5 +16,6 @@ export default function ConnectionStatus({success}: ConnectionStatus) {
 const styles = StyleSheet.create({
     container: {
         justifyContent:'center',
+        height: 40
     }
 })

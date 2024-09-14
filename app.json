@@ -3,7 +3,7 @@
     "name": "Cafe8-Phone",
     "slug": "Cafe8-Phone",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {

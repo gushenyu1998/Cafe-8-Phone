@@ -7,7 +7,6 @@
  For fetching the Socket IO api and Http API
  */
 import axios, {AxiosRequestConfig} from "axios";
-import React from "react";
 
 const setting = require("../Config/Network.json")
 const BASE_URL = setting['protocol'] + setting['address'] + ":" + setting['port']

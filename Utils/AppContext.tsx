@@ -50,7 +50,6 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const [isConnect, setIsConnect] = useState<boolean>(false)
     const [order, setOrder] = useState<FullOrderType[]>([])
     const [sound, setSound] = useState<Audio.Sound>(require("../assets/notification.mp3"))
-    const dataStore = DataStore.getInstance()
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
     useEffect(() => {
         const connectSocket = () => {
@@ -88,16 +87,6 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             socket?.disconnect();
             sound ? sound.unloadAsync() : undefined
         };
-    }, []);
-
-    useEffect(() => {
-        try {
-            dataStore.fetchMemu().then()
-            dataStore.fetchTable().then()
-            dataStore.fetchTags().then()
-        } catch (e) {
-            Alert.alert("Error fetching data from server", "The menu may not be latest");
-        }
     }, []);
 
     const addOrder = async (newOrder: FullOrderType) => {
