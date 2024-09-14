@@ -10,6 +10,7 @@ import ConnectionStatus from "../Components/ConnectionStatus";
 import DataStore from "../Utils/DataStore";
 
 type MultiSelectScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TableSelection'>;
+const networkConfig = require("../Config/Network.json");
 
 interface TableSelectionProps {
     navigation: MultiSelectScreenNavigationProp;
@@ -20,6 +21,7 @@ export default function TableSelection({navigation}: TableSelectionProps): React
     const context = useContext(AppContext)
     const [selectedValue, setSelectedValue] = useState<string>("N/A");
     const [tableList, setTableList] = useState<string[]>([]);
+    const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
 
     useEffect(() => {
         dataStore.getTables().then(tableList => setTableList(tableList))
@@ -30,7 +32,7 @@ export default function TableSelection({navigation}: TableSelectionProps): React
             Alert.alert("Please select a table or Take Out")
         } else {
             //order_id can be required by the backend
-            const order_id = await FetchAPI("http://10.0.2.2:5000/getOrderNumber")
+            const order_id = await FetchAPI(hostAddress+"/getOrderNumber")
             const newOrder: FullOrderType = {
                 order_id: order_id[0],
                 table: selectedValue,
@@ -72,8 +74,7 @@ export default function TableSelection({navigation}: TableSelectionProps): React
                 </View>
                 <TouchableOpacity style={styles.submission} onPress={() => {
                     if (context.isConnect) {
-                        createNewOrder().then(r => {
-                        })
+                        createNewOrder().then(r => {})
                     } else {
                         Alert.alert(
                             "Error: App is not connect to the server\n",
