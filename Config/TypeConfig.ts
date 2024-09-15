@@ -7,7 +7,7 @@ export interface FullOrderType {
 
 export interface OneOrderType {
     dish_id: number,
-    order_name: string, // need plus one Dish ID here
+    order_name: string,
     note: string,
     tags: [string, number][]
     quantity: number,

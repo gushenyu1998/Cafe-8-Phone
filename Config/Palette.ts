@@ -1,5 +1,5 @@
 export const orderPalette = [
-    "#ffe680"
+    "rgba(255,230,128,0.87)"
 ]
 export const tagsPalette = [
     "#fdffb6",
