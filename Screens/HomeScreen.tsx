@@ -43,8 +43,7 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
     }
 
     deleteOrder = async (order_id: number) => {
-        console.log(order_id)
-        // await this.context.deleteOrder({order_id: order_id})
+        await this.context.deleteOrder({order_id: order_id})
     };
 
     renderItem = ({item, index}: { item: FullOrderType; index: number }) => (
