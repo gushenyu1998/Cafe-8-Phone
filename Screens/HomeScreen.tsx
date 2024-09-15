@@ -1,18 +1,13 @@
 import React, {Component} from "react";
 import {
     SafeAreaView,
-    View,
     StyleSheet,
-    TouchableOpacity,
-    Text,
     FlatList,
     PanResponder,
     Animated,
     Dimensions
 } from "react-native";
 import {OrderCard} from "../Components/OrderCard";
-import DataStore from "../Utils/DataStore";
-import {SwipeListView} from 'react-native-swipe-list-view';
 
 import ConnectionStatus from "../Components/ConnectionStatus";
 import {AppContext, AppContextType} from "../Utils/AppContext";

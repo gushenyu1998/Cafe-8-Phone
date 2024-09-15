@@ -11,7 +11,7 @@ function TagItem(tag: string, key: number): React.JSX.Element {
     return (
         <View style={{...styles.tag, backgroundColor: tagsPalette[determineColor(tag, 5) % tagsPalette.length]}}
               key={key}>
-            <Text style={{fontSize: 30, fontWeight: 'bold', textTransform: 'capitalize'}}>{tag}</Text>
+            <Text style={{fontSize: 40, fontWeight: 'bold', textTransform: 'capitalize'}}>{tag}</Text>
         </View>
     )
 }
@@ -83,10 +83,11 @@ const styles = StyleSheet.create({
     tableStyle: {
         fontFamily: "monospace",
         fontWeight: "bold",
-        fontSize: 30
+        fontSize: 30,
+        textAlign:'center'
     },
     orderStyle: {
-        fontSize: 40,
+        fontSize: 45,
         fontFamily: "sans-serif",
         fontWeight: "bold",
         textTransform:"capitalize"
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderColor: 'black',
         borderWidth: 2,
-        padding: 10
+        padding: 10,
+        maxHeight: 500
     }
 })
