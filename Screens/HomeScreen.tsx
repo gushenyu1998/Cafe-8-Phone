@@ -7,9 +7,11 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import ConnectionStatus from "../Components/ConnectionStatus";
 import {AppContext, AppContextType} from "../Utils/AppContext";
 
-interface HomeScreenProps {}
+interface HomeScreenProps {
+}
 
-interface HomeScreenState {}
+interface HomeScreenState {
+}
 
 class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
     private dataStore = DataStore.getInstance()
@@ -35,33 +37,32 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
         return (
             <SafeAreaView style={stylesheet.container}>
                 <ConnectionStatus success={isConnect}/>
-                <Text>Hello Tablet</Text>
-                {/*<SwipeListView*/}
-                {/*    data={this.context.order}*/}
-                {/*    renderItem={({item}) => (*/}
-                {/*        <OrderCard item={item}/>*/}
-                {/*    )}*/}
-                {/*    renderHiddenItem={({item}) => (*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: 'row',*/}
-                {/*            justifyContent: 'flex-end',*/}
-                {/*            alignItems: 'center',*/}
-                {/*            backgroundColor: 'rgba(255,33,33,0.8)',*/}
-                {/*            height: '100%'*/}
-                {/*        }}>*/}
-                {/*            <TouchableOpacity*/}
-                {/*                style={{width: 75, alignItems: 'center', justifyContent: 'center', height: "100%"}}*/}
-                {/*                onPress={() => this.deleteOrder(item.order_id)}*/}
-                {/*            >*/}
-                {/*                <Text style={{color: 'white'}}>Delete</Text>*/}
-                {/*            </TouchableOpacity>*/}
-                {/*        </View>*/}
-                {/*    )}*/}
-                {/*    leftOpenValue={0}*/}
-                {/*    rightOpenValue={-75}*/}
-                {/*    disableRightSwipe*/}
-                {/*    keyExtractor={(item, index) => item.order_id.toString() + index.toString()}*/}
-                {/*/>*/}
+                <SwipeListView
+                    data={this.context.order}
+                    renderItem={({item}) => (
+                        <OrderCard item={item}/>
+                    )}
+                    renderHiddenItem={({item}) => (
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255,33,33,0.8)',
+                            height: '100%'
+                        }}>
+                            <TouchableOpacity
+                                style={{width: 75, alignItems: 'center', justifyContent: 'center', height: "100%"}}
+                                onPress={() => this.deleteOrder(item.order_id)}
+                            >
+                                <Text style={{color: 'white'}}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    leftOpenValue={0}
+                    rightOpenValue={-75}
+                    disableRightSwipe
+                    keyExtractor={(item, index) => item.order_id.toString() + index.toString()}
+                />
             </SafeAreaView>
         )
     }
