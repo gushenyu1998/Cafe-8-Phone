@@ -20,7 +20,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.shenyug.Cafe8Phone",
-      "permissions": ["INTERNET"]
+      "permissions": ["android.permission.INTERNET"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
