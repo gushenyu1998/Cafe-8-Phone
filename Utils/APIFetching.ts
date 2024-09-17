@@ -8,11 +8,11 @@
  */
 import axios, {AxiosRequestConfig} from "axios";
 
-const setting = require("../Config/Network.json")
-const BASE_URL = setting['protocol'] + setting['address'] + ":" + setting['port']
+const networkConfig = require("../Config/Network.json")
+const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
 
 const api = axios.create({
-    baseURL: BASE_URL,
+    baseURL: hostAddress,
     timeout: 10000,
     headers: {
         "Content-Type": "application/json"
