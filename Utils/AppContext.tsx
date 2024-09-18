@@ -67,11 +67,16 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             newSocket.on('message', (message: string) => {
                 if (message.includes('Success: Update the Order')) {
                     FetchAPI(hostAddress + "/getOrder").then(
-                        async order => {
+                        async newOrder => {
                             const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
                             setSound(sound);
+                            const fullOrder: FullOrderType[] = newOrder;
+                            const filteredOrders:FullOrderType[] = fullOrder.map(fullOrder => ({
+                                ...fullOrder,
+                                orders: fullOrder.orders.filter(oneOrder => oneOrder.order_name !== "Drink")
+                            })).filter(fullOrder => fullOrder.orders.length > 0);
                             await sound.playAsync();
-                            setOrder(order)
+                            setOrder(filteredOrders);
                         }
                     )
                 }
