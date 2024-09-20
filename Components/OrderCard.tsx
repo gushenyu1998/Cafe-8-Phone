@@ -11,20 +11,30 @@ type OrderCardType = {
 function TagItem(tag: string, key: number): React.JSX.Element {
     return (
         <View style={{...styles.tag, backgroundColor: tagsPalette[determineColor(tag, 5) % tagsPalette.length]}} key={key}>
-            <Text style={{fontSize: 12.5, fontWeight: 'bold'}}>{tag}</Text>
+            <Text style={{fontSize: 12.5, fontWeight: 'bold', textTransform:'capitalize'}}>{tag}</Text>
+        </View>
+    )
+}
+
+function DoneTag(): React.JSX.Element {
+    return (
+        <View style={{...styles.tag, backgroundColor: 'green'}}>
+            <Text style={{fontSize: 12.5, fontWeight: 'bold', textTransform:'capitalize', color:'white'}}> Completed </Text>
         </View>
     )
 }
 
 export function OrderCard({item, taggedItem}: OrderCardType) {
     if (taggedItem.includes(item.order_id)) {
-        console.log(item.order_id + ' Need to be tagged')
+        console.log(item.order_id + " need to be tagged")
     }
     return (
         <View style={styles.card}>
             {/*tabel as the title of the order type/*/}
-            <View style={styles.tableContainer}>
+            <View style={{...styles.tableContainer}}>
                 <Text style={styles.tableStyle}>Table: {item.table}</Text>
+                <View style={{width:20}}></View>
+                {taggedItem.includes(item.order_id) && <DoneTag/>}
             </View>
 
             {/*Container for each table's order/*/}

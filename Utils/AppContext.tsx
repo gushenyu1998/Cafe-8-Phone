@@ -57,6 +57,15 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
 
     useEffect(() => {
+        const receiveOrder = async () => {
+            const order = await FetchAPI(hostAddress + "/getOrder")
+            const taggedOrder = await FetchAPI(hostAddress + "/getTaggedOrder")
+            setOrder(order)
+            setTaggedOrder(taggedOrder)
+            const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
+            setSound(sound);
+            await sound.playAsync();
+        }
         const connectSocket = () => {
             const newSocket = io(hostAddress + '/cafe-8-backend'); // Replace with your API endpoint
             newSocket.on('connect', () => {
@@ -71,27 +80,20 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
 
             newSocket.on('message', async (message: string) => {
                 if (message.includes('Success: Update the Order')) {
-                    const order = await FetchAPI(hostAddress + "/getOrder")
-                    const taggedOrder = await FetchAPI(hostAddress + "/getTaggedOrder")
-                    console.log(order)
-                    console.log(taggedOrder)
-                    setOrder(order)
-                    setTaggedOrder(taggedOrder)
-                    const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
-                    setSound(sound);
-                    await sound.playAsync();
+                    await receiveOrder()
                 }
             });
 
             setSocket(newSocket);
-            FetchAPI(hostAddress + "/getOrder").then(
-                order => setOrder(order)
-            )
         };
-        connectSocket();
+        receiveOrder().then(connectSocket);
         return () => {
             socket?.disconnect();
-            sound ? sound.unloadAsync() : undefined
+            try {
+                sound?.unloadAsync()
+            }catch (e){
+                console.error(e);
+            }
         };
     }, []);
 
