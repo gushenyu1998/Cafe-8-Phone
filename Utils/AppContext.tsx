@@ -50,6 +50,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const [isConnect, setIsConnect] = useState<boolean>(false)
     const [order, setOrder] = useState<FullOrderType[]>([])
     const [sound, setSound] = useState<Audio.Sound>(require("../assets/notification.mp3"))
+    let previousOrder: FullOrderType[] = []
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
     useEffect(() => {
         const connectSocket = () => {
@@ -64,21 +65,37 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
                 setIsConnect(false);
             });
 
-            newSocket.on('message', (message: string) => {
+            newSocket.on('message', async (message: string) => {
                 if (message.includes('Success: Update the Order')) {
-                    FetchAPI(hostAddress + "/getOrder").then(
-                        async newOrder => {
-                            const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
-                            setSound(sound);
-                            const fullOrder: FullOrderType[] = newOrder;
-                            const filteredOrders:FullOrderType[] = fullOrder.map(fullOrder => ({
-                                ...fullOrder,
-                                orders: fullOrder.orders.filter(oneOrder => oneOrder.order_name !== "Drink")
-                            })).filter(fullOrder => fullOrder.orders.length > 0);
-                            await sound.playAsync();
-                            setOrder(filteredOrders);
-                        }
-                    )
+                    const newOrder: FullOrderType[] = await FetchAPI(hostAddress + "/getOrder")
+                    const taggedOrder: number[] = await FetchAPI(hostAddress + "/getTaggedOrder")
+
+                    // filter out the order are tagged as "deleted"
+                    let filedOrder = newOrder.filter(order => !taggedOrder.includes(order.order_id))
+
+                    // filter out the drink in the order
+                    filedOrder = filedOrder.map(fullOrder => ({
+                        ...fullOrder,
+                        orders: fullOrder.orders.filter(oneOrder => oneOrder.order_name !== "Drink")
+                    }))
+
+                    //filter out the table with no order
+                    filedOrder.filter(oneOrder => oneOrder.orders.length > 0)
+
+                    if (JSON.stringify(filedOrder) !== JSON.stringify(previousOrder)) {
+                        console.log("Filed order length: " + filedOrder.length);
+                        console.log("previous order length: " + previousOrder.length);
+                        setOrder(filedOrder)
+                        previousOrder = JSON.parse(JSON.stringify(filedOrder))
+
+                        //play sound if update the order
+                        const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
+                        setSound(sound);
+                        await sound.playAsync();
+                    } else {
+                        console.log("Filed order length: " + filedOrder.length);
+                        console.log("previous order length: " + previousOrder.length);
+                    }
                 }
             });
 
@@ -111,7 +128,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const deleteOrder = async (orderToRemove: { order_id: number }) => {
         let flag = false
         if (isConnect && socket) {
-            socket.emit('removeOrder', orderToRemove, (reply: string) => {
+            socket.emit('tagOrder', orderToRemove, (reply: string) => {
                 if (!reply.includes("Success")) {
                     Alert.alert("Failed to delete the order");
                 } else {
