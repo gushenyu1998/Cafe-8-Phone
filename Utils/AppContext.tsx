@@ -69,6 +69,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             //filter out the table with no order
             filedOrder = filedOrder.filter(oneOrder => oneOrder.orders.length > 0)
 
+            filedOrder = filedOrder.sort((a,b)=>a.order_id - b.order_id )
+
             if (JSON.stringify(filedOrder) !== JSON.stringify(previousOrder)) {
                 setOrder(filedOrder)
                 previousOrder = JSON.parse(JSON.stringify(filedOrder))
