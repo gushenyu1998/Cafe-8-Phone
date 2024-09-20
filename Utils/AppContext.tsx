@@ -53,6 +53,36 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     let previousOrder: FullOrderType[] = []
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
     useEffect(() => {
+        const receiveOrder = async () => {
+            const newOrder: FullOrderType[] = await FetchAPI(hostAddress + "/getOrder")
+            const taggedOrder: number[] = await FetchAPI(hostAddress + "/getTaggedOrder")
+
+            // filter out the order are tagged as "deleted"
+            let filedOrder = newOrder.filter(order => !taggedOrder.includes(order.order_id))
+
+            // filter out the drink in the order
+            filedOrder = filedOrder.map(fullOrder => ({
+                ...fullOrder,
+                orders: fullOrder.orders.filter(oneOrder => oneOrder.order_name !== "Drink")
+            }))
+
+            //filter out the table with no order
+            filedOrder = filedOrder.filter(oneOrder => oneOrder.orders.length > 0)
+
+            if (JSON.stringify(filedOrder) !== JSON.stringify(previousOrder)) {
+                setOrder(filedOrder)
+                previousOrder = JSON.parse(JSON.stringify(filedOrder))
+
+                //play sound if update the order
+                const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
+                setSound(sound);
+                await sound.playAsync();
+            } else {
+                // console.log("Filed order length: " + filedOrder.length);
+                // console.log("previous order length: " + previousOrder.length);
+            }
+        }
+
         const connectSocket = () => {
             const newSocket = io(hostAddress + '/cafe-8-backend'); // Replace with your API endpoint
             newSocket.on('connect', () => {
@@ -67,44 +97,13 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
 
             newSocket.on('message', async (message: string) => {
                 if (message.includes('Success: Update the Order')) {
-                    const newOrder: FullOrderType[] = await FetchAPI(hostAddress + "/getOrder")
-                    const taggedOrder: number[] = await FetchAPI(hostAddress + "/getTaggedOrder")
-
-                    // filter out the order are tagged as "deleted"
-                    let filedOrder = newOrder.filter(order => !taggedOrder.includes(order.order_id))
-
-                    // filter out the drink in the order
-                    filedOrder = filedOrder.map(fullOrder => ({
-                        ...fullOrder,
-                        orders: fullOrder.orders.filter(oneOrder => oneOrder.order_name !== "Drink")
-                    }))
-
-                    //filter out the table with no order
-                    filedOrder.filter(oneOrder => oneOrder.orders.length > 0)
-
-                    if (JSON.stringify(filedOrder) !== JSON.stringify(previousOrder)) {
-                        console.log("Filed order length: " + filedOrder.length);
-                        console.log("previous order length: " + previousOrder.length);
-                        setOrder(filedOrder)
-                        previousOrder = JSON.parse(JSON.stringify(filedOrder))
-
-                        //play sound if update the order
-                        const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
-                        setSound(sound);
-                        await sound.playAsync();
-                    } else {
-                        console.log("Filed order length: " + filedOrder.length);
-                        console.log("previous order length: " + previousOrder.length);
-                    }
+                    await receiveOrder()
                 }
             });
-
             setSocket(newSocket);
-            FetchAPI(hostAddress + "/getOrder").then(
-                order => setOrder(order)
-            )
         };
-        connectSocket();
+
+        receiveOrder().then(_ => connectSocket())
         return () => {
             socket?.disconnect();
             sound ? sound.unloadAsync() : undefined
