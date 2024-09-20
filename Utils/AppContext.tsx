@@ -58,7 +58,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
 
     useEffect(() => {
         const receiveOrder = async () => {
-            const order = await FetchAPI(hostAddress + "/getOrder")
+            let order:FullOrderType[] = await FetchAPI(hostAddress + "/getOrder")
+            order.sort((a,b)=>a.order_id - b.order_id)
             const taggedOrder = await FetchAPI(hostAddress + "/getTaggedOrder")
             setOrder(order)
             setTaggedOrder(taggedOrder)

@@ -25,9 +25,6 @@ function DoneTag(): React.JSX.Element {
 }
 
 export function OrderCard({item, taggedItem}: OrderCardType) {
-    if (taggedItem.includes(item.order_id)) {
-        console.log(item.order_id + " need to be tagged")
-    }
     return (
         <View style={styles.card}>
             {/*tabel as the title of the order type/*/}
