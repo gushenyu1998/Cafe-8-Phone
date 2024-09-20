@@ -4,7 +4,8 @@ import {FullOrderType} from "../Config/TypeConfig";
 import {orderPalette, tagsPalette, determineColor} from "../Config/Palette";
 
 type OrderCardType = {
-    item: FullOrderType
+    item: FullOrderType,
+    taggedItem: number[]
 }
 
 function TagItem(tag: string, key: number): React.JSX.Element {
@@ -15,7 +16,10 @@ function TagItem(tag: string, key: number): React.JSX.Element {
     )
 }
 
-export function OrderCard({item}: OrderCardType) {
+export function OrderCard({item, taggedItem}: OrderCardType) {
+    if (taggedItem.includes(item.order_id)) {
+        console.log(item.order_id + ' Need to be tagged')
+    }
     return (
         <View style={styles.card}>
             {/*tabel as the title of the order type/*/}

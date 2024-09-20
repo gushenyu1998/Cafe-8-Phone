@@ -12,6 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.shenyug.Cafe8Phone",
       "supportsTablet": false
     },
     "android": {

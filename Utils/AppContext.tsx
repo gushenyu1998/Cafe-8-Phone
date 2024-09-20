@@ -14,6 +14,7 @@ export interface AppContextType {
     updateSelectedItems: (items: FullOrderType) => void;
     isConnect: boolean;
     order: FullOrderType[]
+    taggedOrder: number[],
     addOrder: (item: FullOrderType) => Promise<boolean>;
     deleteOrder: (item: { order_id: number }) => Promise<boolean>
 }
@@ -34,6 +35,7 @@ export const AppContext = createContext<AppContextType>({
     },
     isConnect: false,
     order: [],
+    taggedOrder: [],
     addOrder: async () => false,
     deleteOrder: async () => false
 });
@@ -49,9 +51,11 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
     const [socket, setSocket] = useState<Socket | null>(null)
     const [isConnect, setIsConnect] = useState<boolean>(false)
     const [order, setOrder] = useState<FullOrderType[]>([])
+    const [taggedOrder, setTaggedOrder] = useState<number[]>([])
     const [sound, setSound] = useState<Audio.Sound>(require("../assets/notification.mp3"))
     const dataStore = DataStore.getInstance()
     const hostAddress = networkConfig.protocol + "//" + networkConfig.address + ":" + networkConfig.port
+
     useEffect(() => {
         const connectSocket = () => {
             const newSocket = io(hostAddress + '/cafe-8-backend'); // Replace with your API endpoint
@@ -65,16 +69,17 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
                 setIsConnect(false);
             });
 
-            newSocket.on('message', (message: string) => {
+            newSocket.on('message', async (message: string) => {
                 if (message.includes('Success: Update the Order')) {
-                    FetchAPI(hostAddress + "/getOrder").then(
-                        async order => {
-                            const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
-                            setSound(sound);
-                            await sound.playAsync();
-                            setOrder(order)
-                        }
-                    )
+                    const order = await FetchAPI(hostAddress + "/getOrder")
+                    const taggedOrder = await FetchAPI(hostAddress + "/getTaggedOrder")
+                    console.log(order)
+                    console.log(taggedOrder)
+                    setOrder(order)
+                    setTaggedOrder(taggedOrder)
+                    const {sound} = await Audio.Sound.createAsync(require('../assets/notification.mp3'));
+                    setSound(sound);
+                    await sound.playAsync();
                 }
             });
 
@@ -147,6 +152,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({children}
             updateSelectedItems,
             isConnect,
             order,
+            taggedOrder,
             addOrder,
             deleteOrder
         }}>

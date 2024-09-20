@@ -29,7 +29,6 @@ interface HomeScreenProps {
 interface HomeScreenState {}
 
 class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
-    private dataStore = DataStore.getInstance()
     static contextType = AppContext
 
     // @ts-ignore
@@ -49,14 +48,14 @@ class HomeScreen extends Component<HomeScreenProps, HomeScreenState> {
 
     render() {
         const {navigation} = this.props;
-        let {isConnect} = this.context
+        let {isConnect, taggedOrder} = this.context
         return (
             <SafeAreaView style={stylesheet.container}>
                 <ConnectionStatus success={isConnect}/>
                 <SwipeListView
                     data={this.context.order}
                     renderItem={({item}) => (
-                        <OrderCard item={item}/>
+                        <OrderCard item={item} taggedItem={taggedOrder}/>
                     )}
                     renderHiddenItem={({item}) => (
                         <View style={{

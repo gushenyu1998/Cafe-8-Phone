@@ -81,7 +81,7 @@ class DataStore {
             await AsyncStorage.setItem(this.tagsKey, JSON.stringify(tags))
             return true
         } catch (error) {
-            Alert.alert("Error", "Fail to fetch table list from server")
+            Alert.alert("Error", "Fail to fetch tags list from server")
             return false
         }
     }
